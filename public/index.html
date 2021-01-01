@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ico Editor</title>
+  <link rel="icon" type="image/x-icon" href="/favicon.ico" data-light="/favicon.ico" data-dark="/favicon-dark.ico" sizes="256x256 128x128 64x64 48x48 32x32 24x24 16x16" />
+  <link rel="stylesheet" type="text/css" href="/index.css" />
+</head>
+
+<body>
+
+  <noscript>This isn't gonna work without JavaScript.</noscript>
+
+  <h1><a href="https://github.com/LachlanArthur/ico-editor">Ico Editor</a></h1>
+
+  <main x-data="IcoEditor.alpine()">
+
+    <button @click="$refs.filepickerIcon.click()">Load icon</button>
+    <input type="file" accept=".ico" x-ref="filepickerIcon" @change="loadIcon()" hidden />
+    <span x-text="error" class="error"></span>
+
+    <ul class="images">
+      <template x-for="(image, index) in images" :key="index">
+        <li>
+          <span x-text="`${image.width}×${image.height}`"></span>
+          <span x-text="image.error" class="error"></span>
+          <button @click="deleteImage(index)">Remove</button>
+          <br>
+          <img :src="image.blobUrl" class="checkerboard" />
+        </li>
+      </template>
+    </ul>
+
+    <button @click="$refs.filepickerImage.click()">Add images</button>
+    <input type="file" multiple accept=".png" x-ref="filepickerImage" @change="addImages()" hidden />
+
+    <br><br>
+
+    <button @click="saveIcon()">Save icon</button>
+
+  </main>
+
+  <script type="module" src="/dist/index.js"></script>
+
+</body>
+
+</html>
