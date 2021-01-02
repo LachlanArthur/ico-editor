@@ -44,7 +44,7 @@ class IcoEditor {
   }
 
   deleteImage( index: number ) {
-    delete this.images[ index ];
+    this.images.splice( index, 1 );
   }
 
   async addImages() {
