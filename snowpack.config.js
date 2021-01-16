@@ -8,22 +8,7 @@ module.exports = {
     [ '@snowpack/plugin-typescript', {} ],
     [ '@snowpack/plugin-sass', {} ]
   ],
-  install: [
-    /* ... */
-  ],
-  installOptions: {
+  packageOptions: {
     installTypes: true,
-  },
-  devOptions: {
-    /* ... */
-  },
-  buildOptions: {
-    /* ... */
-  },
-  proxy: {
-    /* ... */
-  },
-  alias: {
-    /* ... */
   },
 };
