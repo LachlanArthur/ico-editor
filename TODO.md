@@ -1,7 +1,10 @@
 # TODO
 
 - Readme
-- Drop files on page to open
-  - Drop an ICO file to load its images
-  - Drop PNG files to add them to the set
-- Better UI
+- Collapsible instructions at top of page
+- Error messages
+  - unsupported filetypes
+  - adding non-square images
+  - adding images larger than 256
+- Decode low bit depth bitmaps to PNG
+- Placeholder for unsupported/broken images

@@ -6,39 +6,60 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ico Editor</title>
   <link rel="icon" type="image/x-icon" href="/favicon.ico" data-light="/favicon.ico" data-dark="/favicon-dark.ico" sizes="256x256 128x128 64x64 48x48 32x32 24x24 16x16" />
-  <link rel="stylesheet" type="text/css" href="/index.css" />
 </head>
 
 <body>
 
-  <noscript>This isn't gonna work without JavaScript.</noscript>
-
-  <h1><a href="https://github.com/LachlanArthur/ico-editor">Ico Editor</a></h1>
-
   <main x-data="IcoEditor.alpine()">
 
-    <button @click="$refs.filepickerIcon.click()">Load icon</button>
-    <input type="file" accept=".ico" x-ref="filepickerIcon" @change="loadIcon()" hidden />
-    <span x-text="error" class="error"></span>
+    <h1 class="display-1">Ico Editor</h1>
+
+    <noscript>This ain’t gonna work without JavaScript.</noscript>
+
+    <div class="droparea" x-ref="droparea" x-spread="spreadDroparea">Drop file</div>
+
+    <p>
+      <label role="button" tabindex="0" class="btn btn-primary">
+        <input type="file" accept=".ico" x-ref="filepickerIcon" @change="filepickerIconChanged()" hidden />
+        Load ico file
+      </label>
+      <span x-text="error" class="error"></span>
+    </p>
 
     <ul class="images">
       <template x-for="(image, index) in images" :key="index">
         <li>
-          <span x-text="`${image.width}×${image.height}`"></span>
-          <span x-text="image.error" class="error"></span>
-          <button @click="deleteImage(index)">Remove</button>
-          <br>
-          <img :src="image.blobUrl" class="checkerboard" />
+          <img :src="image.blobUrl || 'data:image/png;base64,'" class="checkerboard" />
+          <aside>
+            <h2 x-text="`${image.width}×${image.height}`"></h2>
+            <p class="meta" x-text="imageMeta(image)"></p>
+            <p class="error" x-text="imageError( image )"></p>
+            <p class="message" x-text="imageMessage( image )"></p>
+            <button @click="deleteImage(index)" class="btn btn-sm btn-outline-danger">Remove</button>
+          </aside>
         </li>
       </template>
     </ul>
 
-    <button @click="$refs.filepickerImage.click()">Add images</button>
-    <input type="file" multiple accept=".png" x-ref="filepickerImage" @change="addImages()" hidden />
+    <p>
+      <label role="button" tabindex="0" class="btn btn-secondary">
+        <input type="file" multiple accept=".png" x-ref="filepickerImage" @change="filepickerImageChanged()" hidden />
+        Add images
+      </label>
+    </p>
 
-    <br><br>
+    <p>
+      <button @click="saveIcon()" class="btn btn-success">Save ico file</button>
+    </p>
 
-    <button @click="saveIcon()">Save icon</button>
+    <p>
+      <a href="https://github.com/LachlanArthur/ico-editor" title="github.com/LachlanArthur/ico-editor">
+        <svg xmlns="http://www.w3.org/2000/svg" aria-label="GitHub" role="img" viewBox="0 0 512 512" width="1em">
+          <path fill="currentColor" d="M256 0A256 256 0 000 256a256 256 0 00176.14648 243.0332c.28101-.01478.55847-.0332.85352-.0332 13 0 16-6 16-12l-1-50c-71 16-86-28-86-28-12-30-28-37-28-37-24-16 1-16 1-16 26 2 40 26 40 26 22 39 59 28 74 22 2-17 9-28 16-35-57-6-116-28-116-126 0-28 10-51 26-69-3-6-11-32 3-67 0 0 21-7 70 26 42-12 86-12 128 0 49-33 70-26 70-26 14 35 6 61 3 67 16 18 26 41 26 69 0 98-60 120-117 126 10 8 18 24 18 48l-1 70c0 6 3 12 16 12 .1627 0 .31229.01304.4707.01758A256 256 0 00512 256 256 256 0 00256 0z"/>
+        </svg>
+        <span class="sr-only">GitHub</span>
+      </a>
+    </p>
 
   </main>
 

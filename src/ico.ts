@@ -1,4 +1,5 @@
 import { DataViewExtended } from './data-view-extended';
+import { toSuffixed } from './si-suffix';
 
 export class Ico {
 
@@ -157,18 +158,13 @@ export class IcoEntry {
 
     if ( instance.type === 'bmp' ) {
 
+      instance.bitmapInfo = BitmapInfoHeader.unserialize( new DataViewExtended( instance.data.buffer.slice( instance.offset, instance.offset + instance.length ) ) );
+
       if ( instance.bpp !== 32 ) {
-        instance.error = `Bitmaps with less than 32 bits are not supported.`;
-      } else {
-
-        instance.bitmapInfo = BitmapInfoHeader.unserialize( new DataViewExtended( instance.data.buffer.slice( instance.offset, instance.offset + instance.length ) ) );
-
-        if ( instance.bitmapInfo.compression !== BitmapInfoCompression.RGB ) {
-          instance.error = `Compressed bitmaps are not supported.`;
-        }
-
+        instance.error = `Unsupported bit depth`;
+      } else if ( instance.bitmapInfo.compression !== BitmapInfoCompression.RGB ) {
+        instance.error = `Unsupported compression type`;
       }
-
 
     }
 
@@ -220,6 +216,8 @@ export class IcoEntry {
   readBitmap() {
 
     if ( this.bitmapRgba ) return;
+
+    if ( this.error ) return;
 
     if ( !this.bitmapInfo ) return;
 
@@ -322,7 +320,6 @@ export class IcoEntry {
       this.readBitmap();
 
       if ( !this.bitmapRgba ) {
-        // this.error = 'Unsupported bitmap';
         return;
       }
 
@@ -378,7 +375,7 @@ export class IcoEntry {
  *
  * https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-wmf/4e588f70-bd92-4a6f-b77f-35d0feaf7a57
  */
-enum BitmapInfoCompression {
+export enum BitmapInfoCompression {
 
   /**
    * The bitmap is in uncompressed red green blue (RGB) format that is not compressed and does not use color masks.
@@ -430,6 +427,18 @@ enum BitmapInfoCompression {
    */
   CMYKRLE4 = 0x000D,
 };
+
+export const BitmapInfoCompressionNames: Record<BitmapInfoCompression, string> = {
+  [ BitmapInfoCompression.RGB ]: 'Uncompressed RGB',
+  [ BitmapInfoCompression.RLE8 ]: 'RLE-8 compressed RGB',
+  [ BitmapInfoCompression.RLE4 ]: 'RLE-4 compressed RGB',
+  [ BitmapInfoCompression.BITFIELDS ]: 'Uncompressed RGB bitfields',
+  [ BitmapInfoCompression.JPEG ]: 'JPEG compressed',
+  [ BitmapInfoCompression.PNG ]: 'PNG compressed',
+  [ BitmapInfoCompression.CMYK ]: 'Uncompressed CMYK',
+  [ BitmapInfoCompression.CMYKRLE8 ]: 'RLE-8 compressed CMYK',
+  [ BitmapInfoCompression.CMYKRLE4 ]: 'RLE-4 compressed CMYK',
+}
 
 /**
  * https://docs.microsoft.com/en-us/windows/win32/api/wingdi/ns-wingdi-bitmapinfoheader
