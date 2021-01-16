@@ -1,5 +1,3 @@
-import './index.css';
-
 import { faviconColorScheme } from './favicon-dark';
 import 'alpinejs';
 import { IcoEditor } from './ico-editor';
