@@ -38,7 +38,7 @@ export function generateImages() {
     ctx.fillText( i.toString(), i / 2, i / 2 );
 
     canvas.toBlob( blob => {
-      const url = URL.createObjectURL( blob );
+      const url = URL.createObjectURL( blob! );
 
       const link = document.createElement( 'a' );
       link.href = url;

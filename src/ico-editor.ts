@@ -1,6 +1,7 @@
 import { AlpineApp } from './alpine';
 import { DataViewExtended } from './data-view-extended';
-import { BitmapInfoCompression, BitmapInfoCompressionNames, Ico, IcoEntry } from './ico';
+import { Ico, IcoEntry } from './structures/ico';
+import { BitmapInfoCompression, BitmapInfoCompressionNames } from './structures/bitmap/bitmap-info-header';
 import { toSuffixed } from './si-suffix';
 
 export class IcoEditor extends AlpineApp {

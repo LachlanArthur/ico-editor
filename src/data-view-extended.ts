@@ -4,13 +4,13 @@ export class DataViewExtended extends DataView {
 
   public cursor = 0;
 
-  protected _getFloat32( littleEndian?: boolean ) {
+  protected _getFloat32( littleEndian: boolean ) {
     const value = super.getFloat32( this.cursor, littleEndian );
     this.cursor += 4;
     return value;
   }
 
-  protected _getFloat64( littleEndian?: boolean ) {
+  protected _getFloat64( littleEndian: boolean ) {
     const value = super.getFloat64( this.cursor, littleEndian );
     this.cursor += 8;
     return value;
@@ -22,13 +22,13 @@ export class DataViewExtended extends DataView {
     return value;
   }
 
-  protected _getInt16( littleEndian?: boolean ) {
+  protected _getInt16( littleEndian: boolean ) {
     const value = super.getInt16( this.cursor, littleEndian );
     this.cursor += 2;
     return value;
   }
 
-  protected _getInt32( littleEndian?: boolean ) {
+  protected _getInt32( littleEndian: boolean ) {
     const value = super.getInt32( this.cursor, littleEndian );
     this.cursor += 4;
     return value;
@@ -40,31 +40,31 @@ export class DataViewExtended extends DataView {
     return value;
   }
 
-  protected _getUint16( littleEndian?: boolean ) {
+  protected _getUint16( littleEndian: boolean ) {
     const value = super.getUint16( this.cursor, littleEndian );
     this.cursor += 2;
     return value;
   }
 
-  protected _getUint32( littleEndian?: boolean ) {
+  protected _getUint32( littleEndian: boolean ) {
     const value = super.getUint32( this.cursor, littleEndian );
     this.cursor += 4;
     return value;
   }
 
-  protected _getBigInt64( littleEndian?: boolean ) {
+  protected _getBigInt64( littleEndian: boolean ) {
     const value = super.getBigInt64( this.cursor, littleEndian );
     this.cursor += 8;
     return value;
   }
 
-  protected _getBigUint64( littleEndian?: boolean ) {
+  protected _getBigUint64( littleEndian: boolean ) {
     const value = super.getBigUint64( this.cursor, littleEndian );
     this.cursor += 8;
     return value;
   }
 
-  protected _getFloat32Array( count: number, littleEndian?: boolean ) {
+  protected _getFloat32Array( count: number, littleEndian: boolean ) {
     const data = new Float32Array( count );
     for ( let i = 0; i < count; i++ ) {
       data.set( [ this._getFloat32( littleEndian ) ], i );
@@ -72,7 +72,7 @@ export class DataViewExtended extends DataView {
     return data;
   }
 
-  protected _getFloat64Array( count: number, littleEndian?: boolean ) {
+  protected _getFloat64Array( count: number, littleEndian: boolean ) {
     const data = new Float64Array( count );
     for ( let i = 0; i < count; i++ ) {
       data.set( [ this._getFloat64( littleEndian ) ], i );
@@ -88,7 +88,7 @@ export class DataViewExtended extends DataView {
     return data;
   }
 
-  protected _getInt16Array( count: number, littleEndian?: boolean ) {
+  protected _getInt16Array( count: number, littleEndian: boolean ) {
     const data = new Int16Array( count );
     for ( let i = 0; i < count; i++ ) {
       data.set( [ this._getInt16( littleEndian ) ], i );
@@ -96,7 +96,7 @@ export class DataViewExtended extends DataView {
     return data;
   }
 
-  protected _getInt32Array( count: number, littleEndian?: boolean ) {
+  protected _getInt32Array( count: number, littleEndian: boolean ) {
     const data = new Int32Array( count );
     for ( let i = 0; i < count; i++ ) {
       data.set( [ this._getInt32( littleEndian ) ], i );
@@ -112,7 +112,7 @@ export class DataViewExtended extends DataView {
     return data;
   }
 
-  protected _getUint16Array( count: number, littleEndian?: boolean ) {
+  protected _getUint16Array( count: number, littleEndian: boolean ) {
     const data = new Uint16Array( count );
     for ( let i = 0; i < count; i++ ) {
       data.set( [ this._getUint16( littleEndian ) ], i );
@@ -120,7 +120,7 @@ export class DataViewExtended extends DataView {
     return data;
   }
 
-  protected _getUint32Array( count: number, littleEndian?: boolean ) {
+  protected _getUint32Array( count: number, littleEndian: boolean ) {
     const data = new Uint32Array( count );
     for ( let i = 0; i < count; i++ ) {
       data.set( [ this._getUint32( littleEndian ) ], i );
@@ -128,7 +128,7 @@ export class DataViewExtended extends DataView {
     return data;
   }
 
-  protected _getBigInt64Array( count: number, littleEndian?: boolean ) {
+  protected _getBigInt64Array( count: number, littleEndian: boolean ) {
     const data = new BigInt64Array( count );
     for ( let i = 0; i < count; i++ ) {
       data.set( [ this._getBigInt64( littleEndian ) ], i );
@@ -136,7 +136,7 @@ export class DataViewExtended extends DataView {
     return data;
   }
 
-  protected _getBigUint64Array( count: number, littleEndian?: boolean ) {
+  protected _getBigUint64Array( count: number, littleEndian: boolean ) {
     const data = new BigUint64Array( count );
     for ( let i = 0; i < count; i++ ) {
       data.set( [ this._getBigUint64( littleEndian ) ], i );
@@ -144,114 +144,132 @@ export class DataViewExtended extends DataView {
     return data;
   }
 
-  protected _setFloat32( value: number, littleEndian?: boolean ) {
-    super.setFloat32( this.cursor, value, littleEndian );
-    this.cursor += 4;
-  }
-
-  protected _setFloat64( value: number, littleEndian?: boolean ) {
-    super.setFloat64( this.cursor, value, littleEndian );
-    this.cursor += 8;
-  }
-
-  protected _setInt8( value: number ) {
-    super.setInt8( this.cursor, value );
-    this.cursor += 1;
-  }
-
-  protected _setInt16( value: number, littleEndian?: boolean ) {
-    super.setInt16( this.cursor, value, littleEndian );
-    this.cursor += 2;
-  }
-
-  protected _setInt32( value: number, littleEndian?: boolean ) {
-    super.setInt32( this.cursor, value, littleEndian );
-    this.cursor += 4;
-  }
-
-  protected _setUint8( value: number ) {
-    super.setUint8( this.cursor, value );
-    this.cursor += 1;
-  }
-
-  protected _setUint16( value: number, littleEndian?: boolean ) {
-    super.setUint16( this.cursor, value, littleEndian );
-    this.cursor += 2;
-  }
-
-  protected _setUint32( value: number, littleEndian?: boolean ) {
-    super.setUint32( this.cursor, value, littleEndian );
-    this.cursor += 4;
-  }
-
-  protected _setBigInt64( value: bigint, littleEndian?: boolean ) {
-    super.setBigInt64( this.cursor, value, littleEndian );
-    this.cursor += 8;
-  }
-
-  protected _setBigUint64( value: bigint, littleEndian?: boolean ) {
-    super.setBigUint64( this.cursor, value, littleEndian );
-    this.cursor += 8;
-  }
-
-  protected _setFloat32Array( values: number[] | Float32Array, littleEndian?: boolean ) {
-    for ( let value of values ) {
-      this._setFloat32( value, littleEndian );
+  protected advanceCursor( size: number, cursor?: number ) {
+    if ( typeof cursor === 'undefined' ) {
+      return this.cursor += size;
     }
+
+    return cursor + size;
   }
 
-  protected _setFloat64Array( values: number[] | Float64Array, littleEndian?: boolean ) {
-    for ( let value of values ) {
-      this._setFloat64( value, littleEndian );
-    }
+  protected _setFloat32( value: number, littleEndian: boolean, cursor?: number ) {
+    super.setFloat32( cursor ?? this.cursor, value, littleEndian );
+    return this.advanceCursor( 4, cursor );
   }
 
-  protected _setInt8Array( values: number[] | Int8Array ) {
-    for ( let value of values ) {
-      this._setInt8( value );
-    }
+  protected _setFloat64( value: number, littleEndian: boolean, cursor?: number ) {
+    super.setFloat64( cursor ?? this.cursor, value, littleEndian );
+    return this.advanceCursor( 8, cursor );
   }
 
-  protected _setInt16Array( values: number[] | Int16Array, littleEndian?: boolean ) {
-    for ( let value of values ) {
-      this._setInt16( value, littleEndian );
-    }
+  protected _setInt8( value: number, cursor?: number ) {
+    super.setInt8( cursor ?? this.cursor, value );
+    return this.advanceCursor( 1, cursor );
   }
 
-  protected _setInt32Array( values: number[] | Int32Array, littleEndian?: boolean ) {
-    for ( let value of values ) {
-      this._setInt32( value, littleEndian );
-    }
+  protected _setInt16( value: number, littleEndian: boolean, cursor?: number ) {
+    super.setInt16( cursor ?? this.cursor, value, littleEndian );
+    return this.advanceCursor( 2, cursor );
   }
 
-  protected _setUint8Array( values: number[] | Uint8Array ) {
-    for ( let value of values ) {
-      this._setUint8( value );
-    }
+  protected _setInt32( value: number, littleEndian: boolean, cursor?: number ) {
+    super.setInt32( cursor ?? this.cursor, value, littleEndian );
+    return this.advanceCursor( 4, cursor );
   }
 
-  protected _setUint16Array( values: number[] | Uint16Array, littleEndian?: boolean ) {
-    for ( let value of values ) {
-      this._setUint16( value, littleEndian );
-    }
+  protected _setUint8( value: number, cursor?: number ) {
+    super.setUint8( cursor ?? this.cursor, value );
+    return this.advanceCursor( 1, cursor );
   }
 
-  protected _setUint32Array( values: number[] | Uint32Array, littleEndian?: boolean ) {
-    for ( let value of values ) {
-      this._setUint32( value, littleEndian );
-    }
+  protected _setUint16( value: number, littleEndian: boolean, cursor?: number ) {
+    super.setUint16( cursor ?? this.cursor, value, littleEndian );
+    return this.advanceCursor( 2, cursor );
   }
 
-  protected _setBigInt64Array( values: bigint[] | BigInt64Array, littleEndian?: boolean ) {
-    for ( let value of values ) {
-      this._setBigInt64( value, littleEndian );
-    }
+  protected _setUint32( value: number, littleEndian: boolean, cursor?: number ) {
+    super.setUint32( cursor ?? this.cursor, value, littleEndian );
+    return this.advanceCursor( 4, cursor );
   }
 
-  protected _setBigUint64Array( values: bigint[] | BigUint64Array, littleEndian?: boolean ) {
+  protected _setBigInt64( value: bigint, littleEndian: boolean, cursor?: number ) {
+    super.setBigInt64( cursor ?? this.cursor, value, littleEndian );
+    return this.advanceCursor( 8, cursor );
+  }
+
+  protected _setBigUint64( value: bigint, littleEndian: boolean, cursor?: number ) {
+    super.setBigUint64( cursor ?? this.cursor, value, littleEndian );
+    return this.advanceCursor( 8, cursor );
+  }
+
+  protected _setFloat32Array( values: number[] | Float32Array, littleEndian: boolean, cursor?: number ) {
     for ( let value of values ) {
-      this._setBigUint64( value, littleEndian );
+      cursor = this._setFloat32( value, littleEndian, cursor );
     }
+    return cursor ?? this.cursor;
+  }
+
+  protected _setFloat64Array( values: number[] | Float64Array, littleEndian: boolean, cursor?: number ) {
+    for ( let value of values ) {
+      cursor = this._setFloat64( value, littleEndian, cursor );
+    }
+    return cursor ?? this.cursor;
+  }
+
+  protected _setInt8Array( values: number[] | Int8Array, cursor?: number ) {
+    for ( let value of values ) {
+      cursor = this._setInt8( value, cursor );
+    }
+    return cursor ?? this.cursor;
+  }
+
+  protected _setInt16Array( values: number[] | Int16Array, littleEndian: boolean, cursor?: number ) {
+    for ( let value of values ) {
+      cursor = this._setInt16( value, littleEndian, cursor );
+    }
+    return cursor ?? this.cursor;
+  }
+
+  protected _setInt32Array( values: number[] | Int32Array, littleEndian: boolean, cursor?: number ) {
+    for ( let value of values ) {
+      cursor = this._setInt32( value, littleEndian, cursor );
+    }
+    return cursor ?? this.cursor;
+  }
+
+  protected _setUint8Array( values: number[] | Uint8Array, cursor?: number ) {
+    for ( let value of values ) {
+      cursor = this._setUint8( value, cursor );
+    }
+    return cursor ?? this.cursor;
+  }
+
+  protected _setUint16Array( values: number[] | Uint16Array, littleEndian: boolean, cursor?: number ) {
+    for ( let value of values ) {
+      cursor = this._setUint16( value, littleEndian, cursor );
+    }
+    return cursor ?? this.cursor;
+  }
+
+  protected _setUint32Array( values: number[] | Uint32Array, littleEndian: boolean, cursor?: number ) {
+    for ( let value of values ) {
+      cursor = this._setUint32( value, littleEndian, cursor );
+    }
+    return cursor ?? this.cursor;
+  }
+
+  protected _setBigInt64Array( values: bigint[] | BigInt64Array, littleEndian: boolean, cursor?: number ) {
+    for ( let value of values ) {
+      cursor = this._setBigInt64( value, littleEndian, cursor );
+    }
+    return cursor ?? this.cursor;
+  }
+
+  protected _setBigUint64Array( values: bigint[] | BigUint64Array, littleEndian: boolean, cursor?: number ) {
+    for ( let value of values ) {
+      cursor = this._setBigUint64( value, littleEndian, cursor );
+    }
+    return cursor ?? this.cursor;
   }
 
   getFloat32le() {
@@ -398,148 +416,148 @@ export class DataViewExtended extends DataView {
     return this._getBigUint64Array( count, false );
   }
 
-  setFloat32le( value: number ) {
-    this._setFloat32( value, true );
+  setFloat32le( value: number, cursor?: number ) {
+    return this._setFloat32( value, true, cursor );
   }
 
-  setFloat32be( value: number ) {
-    this._setFloat32( value, false );
+  setFloat32be( value: number, cursor?: number ) {
+    return this._setFloat32( value, false, cursor );
   }
 
-  setFloat64le( value: number ) {
-    this._setFloat64( value, true );
+  setFloat64le( value: number, cursor?: number ) {
+    return this._setFloat64( value, true, cursor );
   }
 
-  setFloat64be( value: number ) {
-    this._setFloat64( value, false );
+  setFloat64be( value: number, cursor?: number ) {
+    return this._setFloat64( value, false, cursor );
   }
 
-  setInt8( value: number ) {
-    this._setInt8( value );
+  setInt8( value: number, cursor?: number ) {
+    return this._setInt8( value, cursor );
   }
 
-  setInt16le( value: number ) {
-    this._setInt16( value, true );
+  setInt16le( value: number, cursor?: number ) {
+    return this._setInt16( value, true, cursor );
   }
 
-  setInt16be( value: number ) {
-    this._setInt16( value, false );
+  setInt16be( value: number, cursor?: number ) {
+    return this._setInt16( value, false, cursor );
   }
 
-  setInt32le( value: number ) {
-    this._setInt32( value, true );
+  setInt32le( value: number, cursor?: number ) {
+    return this._setInt32( value, true, cursor );
   }
 
-  setInt32be( value: number ) {
-    this._setInt32( value, false );
+  setInt32be( value: number, cursor?: number ) {
+    return this._setInt32( value, false, cursor );
   }
 
-  setUint8( value: number ) {
-    this._setUint8( value );
+  setUint8( value: number, cursor?: number ) {
+    return this._setUint8( value, cursor );
   }
 
-  setUint16le( value: number ) {
-    this._setUint16( value, true );
+  setUint16le( value: number, cursor?: number ) {
+    return this._setUint16( value, true, cursor );
   }
 
-  setUint16be( value: number ) {
-    this._setUint16( value, false );
+  setUint16be( value: number, cursor?: number ) {
+    return this._setUint16( value, false, cursor );
   }
 
-  setUint32le( value: number ) {
-    this._setUint32( value, true );
+  setUint32le( value: number, cursor?: number ) {
+    return this._setUint32( value, true, cursor );
   }
 
-  setUint32be( value: number ) {
-    this._setUint32( value, false );
+  setUint32be( value: number, cursor?: number ) {
+    return this._setUint32( value, false, cursor );
   }
 
-  setBigInt64le( value: bigint ) {
-    this._setBigInt64( value, true );
+  setBigInt64le( value: bigint, cursor?: number ) {
+    return this._setBigInt64( value, true, cursor );
   }
 
-  setBigInt64be( value: bigint ) {
-    this._setBigInt64( value, false );
+  setBigInt64be( value: bigint, cursor?: number ) {
+    return this._setBigInt64( value, false, cursor );
   }
 
-  setBigUint64le( value: bigint ) {
-    this._setBigUint64( value, true );
+  setBigUint64le( value: bigint, cursor?: number ) {
+    return this._setBigUint64( value, true, cursor );
   }
 
-  setBigUint64be( value: bigint ) {
-    this._setBigUint64( value, false );
+  setBigUint64be( value: bigint, cursor?: number ) {
+    return this._setBigUint64( value, false, cursor );
   }
 
-  setFloat32leArray( values: number[] | Float32Array ) {
-    this._setFloat32Array( values, true );
+  setFloat32leArray( values: number[] | Float32Array, cursor?: number ) {
+    return this._setFloat32Array( values, true, cursor );
   }
 
-  setFloat32beArray( values: number[] | Float32Array ) {
-    this._setFloat32Array( values, false );
+  setFloat32beArray( values: number[] | Float32Array, cursor?: number ) {
+    return this._setFloat32Array( values, false, cursor );
   }
 
-  setFloat64leArray( values: number[] | Float64Array ) {
-    this._setFloat64Array( values, true );
+  setFloat64leArray( values: number[] | Float64Array, cursor?: number ) {
+    return this._setFloat64Array( values, true, cursor );
   }
 
-  setFloat64beArray( values: number[] | Float64Array ) {
-    this._setFloat64Array( values, false );
+  setFloat64beArray( values: number[] | Float64Array, cursor?: number ) {
+    return this._setFloat64Array( values, false, cursor );
   }
 
-  setInt8Array( values: number[] | Int8Array ) {
-    this._setInt8Array( values );
+  setInt8Array( values: number[] | Int8Array, cursor?: number ) {
+    return this._setInt8Array( values, cursor );
   }
 
-  setInt16leArray( values: number[] | Int16Array ) {
-    this._setInt16Array( values, true );
+  setInt16leArray( values: number[] | Int16Array, cursor?: number ) {
+    return this._setInt16Array( values, true, cursor );
   }
 
-  setInt16beArray( values: number[] | Int16Array ) {
-    this._setInt16Array( values, false );
+  setInt16beArray( values: number[] | Int16Array, cursor?: number ) {
+    return this._setInt16Array( values, false, cursor );
   }
 
-  setInt32leArray( values: number[] | Int32Array ) {
-    this._setInt32Array( values, true );
+  setInt32leArray( values: number[] | Int32Array, cursor?: number ) {
+    return this._setInt32Array( values, true, cursor );
   }
 
-  setInt32beArray( values: number[] | Int32Array ) {
-    this._setInt32Array( values, false );
+  setInt32beArray( values: number[] | Int32Array, cursor?: number ) {
+    return this._setInt32Array( values, false, cursor );
   }
 
-  setUint8Array( values: number[] | Uint8Array ) {
-    this._setUint8Array( values );
+  setUint8Array( values: number[] | Uint8Array, cursor?: number ) {
+    return this._setUint8Array( values, cursor );
   }
 
-  setUint16leArray( values: number[] | Uint16Array ) {
-    this._setUint16Array( values, true );
+  setUint16leArray( values: number[] | Uint16Array, cursor?: number ) {
+    return this._setUint16Array( values, true, cursor );
   }
 
-  setUint16beArray( values: number[] | Uint16Array ) {
-    this._setUint16Array( values, false );
+  setUint16beArray( values: number[] | Uint16Array, cursor?: number ) {
+    return this._setUint16Array( values, false, cursor );
   }
 
-  setUint32leArray( values: number[] | Uint32Array ) {
-    this._setUint32Array( values, true );
+  setUint32leArray( values: number[] | Uint32Array, cursor?: number ) {
+    return this._setUint32Array( values, true, cursor );
   }
 
-  setUint32beArray( values: number[] | Uint32Array ) {
-    this._setUint32Array( values, false );
+  setUint32beArray( values: number[] | Uint32Array, cursor?: number ) {
+    return this._setUint32Array( values, false, cursor );
   }
 
-  setBigInt64leArray( values: bigint[] | BigInt64Array ) {
-    this._setBigInt64Array( values, true );
+  setBigInt64leArray( values: bigint[] | BigInt64Array, cursor?: number ) {
+    return this._setBigInt64Array( values, true, cursor );
   }
 
-  setBigInt64beArray( values: bigint[] | BigInt64Array ) {
-    this._setBigInt64Array( values, false );
+  setBigInt64beArray( values: bigint[] | BigInt64Array, cursor?: number ) {
+    return this._setBigInt64Array( values, false, cursor );
   }
 
-  setBigUint64leArray( values: bigint[] | BigUint64Array ) {
-    this._setBigUint64Array( values, true );
+  setBigUint64leArray( values: bigint[] | BigUint64Array, cursor?: number ) {
+    return this._setBigUint64Array( values, true, cursor );
   }
 
-  setBigUint64beArray( values: bigint[] | BigUint64Array ) {
-    this._setBigUint64Array( values, false );
+  setBigUint64beArray( values: bigint[] | BigUint64Array, cursor?: number ) {
+    return this._setBigUint64Array( values, false, cursor );
   }
 
 }
