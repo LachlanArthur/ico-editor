@@ -1,6 +1,7 @@
-import { DataViewExtended } from "../../data-view-extended";
 import { Structure } from "../structure";
 import { IcoEntry } from "./ico-entry";
+import { IcoEntryBmp } from "./ico-entry-bmp";
+import { IcoEntryPng } from "./ico-entry-png";
 
 export class Ico extends Structure {
 
@@ -10,24 +11,30 @@ export class Ico extends Structure {
 
   images: IcoEntry[] = [];
 
-  static unserialize( data: DataViewExtended ) {
+  static unserialize( dataView: DataView ) {
 
-    const instance = new this( data );
+    const instance = new this();
 
-    const magic = instance.data.getUint16leArray( 2 );
-
-    if ( magic.join( '' ) !== '01' ) {
+    if ( !this.detectIco( dataView ) ) {
       instance.error = 'Not an ICO file';
       return instance;
     }
 
-    const imageCount = instance.data.getUint16le();
+    let cursor = 4;
 
-    for ( let i = 0; i < imageCount; i++ ) {
-      const image = IcoEntry.unserialize( instance.data );
-      if ( !image ) continue;
+    const imageCount = dataView.getUint16( cursor, true ); cursor += 2;
+
+    for ( let i = 0; i < imageCount; i++, cursor += IcoEntry.HEADERSIZE ) {
+      const imageBuffer = new DataView( dataView.buffer, cursor );
+
+      const image = IcoEntryPng.detectPng( imageBuffer )
+        ? IcoEntryPng.unserialize( imageBuffer )
+        : IcoEntryBmp.unserialize( imageBuffer )
+
       instance.images.push( image );
     }
+
+    console.log( 'Ico', instance );
 
     return instance;
 
@@ -35,7 +42,7 @@ export class Ico extends Structure {
 
   static createFromImages( images: IcoEntry[] ): Ico {
 
-    const instance = new Ico( new DataViewExtended( new ArrayBuffer( 0 ) ) );
+    const instance = new Ico();
 
     instance.images = [ ...images ];
 
@@ -45,44 +52,56 @@ export class Ico extends Structure {
 
   async serialize(): Promise<ArrayBuffer> {
 
-    let images = [ ...this.images ];
+    const bytes = new Uint8Array( this.serializedLength );
+    const dataView = new DataView( bytes.buffer );
 
-    for ( let i = images.length - 1; i >= 0; i-- ) {
-      const image = images[ i ];
-      if ( !( await image.convertToPng() ) ) {
-        images.splice( i, 1 );
-      }
-    }
+    let cursor = 0;
 
-    const header = new DataViewExtended( new ArrayBuffer( Ico.HEADERSIZE ) );
+    // Magic bytes
+    dataView.setUint16( cursor, 0, true ); cursor += 2;
+    dataView.setUint16( cursor, 1, true ); cursor += 2;
+    dataView.setUint16( cursor, this.images.length, true ); cursor += 2;
 
-    header.setUint16le( 0 );
-    header.setUint16le( 1 );
+    let imageDataCursor = Ico.HEADERSIZE + this.images.length * IcoEntry.HEADERSIZE;
 
-    let fileSize = Ico.HEADERSIZE;
-    for ( const image of images ) {
-      fileSize += IcoEntry.HEADERSIZE + image.length;
-    }
-
-    header.setUint16le( images.length );
-
-    const fileView = new DataViewExtended( new ArrayBuffer( fileSize ) );
-
-    let imageHeaderCursor = fileView.setUint8Array( new Uint8Array( header.buffer ), 0 );
-
-    let imageDataCursor = imageHeaderCursor + IcoEntry.HEADERSIZE * images.length;
-
-    for ( const image of images ) {
+    for ( const image of this.images ) {
 
       image.offset = imageDataCursor;
 
-      imageHeaderCursor = fileView.setUint8Array( new Uint8Array( await image.serialize() ), imageHeaderCursor );
-      imageDataCursor = fileView.setUint8Array( new Uint8Array( image.getImageBytes() ), imageDataCursor );
+      const imageHeaderBytes = new Uint8Array( await image.serialize() );
+      const imageDataBytes = new Uint8Array( image.getImageBytes() );
+
+      bytes.set( imageHeaderBytes, cursor );
+      bytes.set( imageDataBytes, imageDataCursor );
+
+      cursor += imageHeaderBytes.length;
+      imageDataCursor += imageDataBytes.length;
 
     }
 
-    return fileView.buffer;
+    return bytes.buffer;
 
+  }
+
+  get serializedLength(): number {
+
+    let size = Ico.HEADERSIZE;
+
+    for ( const image of this.images ) {
+      size += image.serializedLength;
+    }
+
+    return size;
+
+  }
+
+  static detectIco( dataView: DataView ) {
+    const magic = new Uint16Array( dataView.buffer, dataView.byteOffset, 4 );
+
+    return (
+      magic[ 0 ] === 0 &&
+      magic[ 1 ] === 1
+    )
   }
 
 }

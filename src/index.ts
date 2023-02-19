@@ -1,5 +1,5 @@
 import { faviconColorScheme } from './favicon-dark';
-import 'alpinejs';
+import Alpine from 'alpinejs';
 import { IcoEditor } from './ico-editor';
 
 declare global {
@@ -11,3 +11,5 @@ declare global {
 window.IcoEditor = IcoEditor;
 
 window.addEventListener( 'DOMContentLoaded', faviconColorScheme );
+
+Alpine.start();

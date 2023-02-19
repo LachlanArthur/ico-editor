@@ -1,9 +1,5 @@
-import type { DataViewExtended } from "../data-view-extended";
-
 export abstract class Structure {
-  constructor( public data: DataViewExtended ) { }
-
-  static unserialize( dataView: DataViewExtended ): Structure {
+  static unserialize( dataView: DataView ) {
     throw new Error( 'Not implemented' );
   }
 

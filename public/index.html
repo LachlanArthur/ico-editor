@@ -11,13 +11,13 @@
 
 <body>
 
-  <main x-data="IcoEditor.alpine()">
+  <main x-data="IcoEditor.alpine()" :data-background-mode="backgroundMode">
 
     <h1 class="display-1">Ico Editor</h1>
 
     <noscript>This ain’t gonna work without JavaScript.</noscript>
 
-    <div class="droparea" x-ref="droparea" x-spread="spreadDroparea">Drop file</div>
+    <div class="droparea" x-ref="droparea" x-bind="bindDroparea">Drop file</div>
 
     <p>
       <label role="button" tabindex="0" class="btn btn-primary">
@@ -27,16 +27,40 @@
       <span x-text="error" class="error"></span>
     </p>
 
+    <template x-if="hasBmp">
+      <div class="alert alert-info">
+        <p>This file contains BMP images that could be converted to PNG.</p>
+
+        <p>File would be compressed from <span x-text="currentFilesize"></span> to <span x-text="simulatePngSize"></span>.</p>
+
+        <button @click="images = await convertAllImagesToPng()" class="btn btn-info">Convert all to PNG</button>
+      </div>
+    </template>
+
+    <template x-if="images.length > 0">
+      <p>
+        <template x-for="bgMode of backgroundModes">
+          <button @click="backgroundMode = bgMode" class="btn btn-secondary checkerboard bg-mode-button" :data-background-mode="bgMode"></button>
+        </template>
+      </p>
+    </template>
+
     <ul class="images">
       <template x-for="(image, index) in images" :key="index">
         <li>
           <img :src="image.blobUrl || 'data:image/png;base64,'" class="checkerboard" />
           <aside>
             <h2 x-text="`${image.width}×${image.height}`"></h2>
-            <p class="meta" x-text="imageMeta(image)"></p>
+            <p class="meta" x-text="imageMeta( image )"></p>
             <p class="error" x-text="imageError( image )"></p>
-            <p class="message" x-text="imageMessage( image )"></p>
-            <button @click="deleteImage(index)" class="btn btn-sm btn-outline-danger">Remove</button>
+            <ul class="message">
+              <template x-for="message of imageMessages( image )">
+                <li x-text="message"></li>
+              </template>
+            </ul>
+            <button @click="downloadFile( image )" class="btn btn-sm btn-outline-primary">Download <span x-text="image.type.toUpperCase()"></span></button>
+            <button @click="image = await convertImageToPng( image )" class="btn btn-sm btn-outline-info" x-show="image.type !== 'png'">Convert to PNG</button>
+            <button @click="deleteImage( index )" class="btn btn-sm btn-link text-danger">Remove</button>
           </aside>
         </li>
       </template>
@@ -49,14 +73,17 @@
       </label>
     </p>
 
-    <p>
-      <button @click="saveIcon()" class="btn btn-success">Save ico file</button>
-    </p>
+    <template x-if="images.length > 0">
+      <p style="text-align: center;">
+        <button @click="saveIcon()" class="btn btn-success">Save ico file</button><br>
+        <small>(<span x-text="currentFilesize"></span>)</small>
+      </p>
+    </template>
 
     <p>
       <a href="https://github.com/LachlanArthur/ico-editor" title="github.com/LachlanArthur/ico-editor">
         <svg xmlns="http://www.w3.org/2000/svg" aria-label="GitHub" role="img" viewBox="0 0 512 512" width="1em">
-          <path fill="currentColor" d="M256 0A256 256 0 000 256a256 256 0 00176.14648 243.0332c.28101-.01478.55847-.0332.85352-.0332 13 0 16-6 16-12l-1-50c-71 16-86-28-86-28-12-30-28-37-28-37-24-16 1-16 1-16 26 2 40 26 40 26 22 39 59 28 74 22 2-17 9-28 16-35-57-6-116-28-116-126 0-28 10-51 26-69-3-6-11-32 3-67 0 0 21-7 70 26 42-12 86-12 128 0 49-33 70-26 70-26 14 35 6 61 3 67 16 18 26 41 26 69 0 98-60 120-117 126 10 8 18 24 18 48l-1 70c0 6 3 12 16 12 .1627 0 .31229.01304.4707.01758A256 256 0 00512 256 256 256 0 00256 0z"/>
+          <path fill="currentColor" d="M256 0A256 256 0 000 256a256 256 0 00176.14648 243.0332c.28101-.01478.55847-.0332.85352-.0332 13 0 16-6 16-12l-1-50c-71 16-86-28-86-28-12-30-28-37-28-37-24-16 1-16 1-16 26 2 40 26 40 26 22 39 59 28 74 22 2-17 9-28 16-35-57-6-116-28-116-126 0-28 10-51 26-69-3-6-11-32 3-67 0 0 21-7 70 26 42-12 86-12 128 0 49-33 70-26 70-26 14 35 6 61 3 67 16 18 26 41 26 69 0 98-60 120-117 126 10 8 18 24 18 48l-1 70c0 6 3 12 16 12 .1627 0 .31229.01304.4707.01758A256 256 0 00512 256 256 256 0 00256 0z" />
         </svg>
         <span class="sr-only">GitHub</span>
       </a>
