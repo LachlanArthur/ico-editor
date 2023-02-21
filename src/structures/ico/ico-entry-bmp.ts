@@ -23,7 +23,9 @@ export class IcoEntryBmp extends IcoEntry {
 
   bitmapFile!: Uint8ClampedArray;
 
-  mask?: Uint8ClampedArray;
+  mask!: Uint8ClampedArray;
+
+  alpha?: Uint8ClampedArray;
 
   static unserialize( dataView: DataView ): IcoEntryBmp {
 
@@ -42,58 +44,8 @@ export class IcoEntryBmp extends IcoEntry {
     // Divide by two to get the true height of the image.
     instance.bitmapInfo.height /= 2;
 
-    if ( instance.length > dibSize ) {
-      instance.mask = ( () => {
-        // The mask width is a multiple of 32 bits padded with zeroes
-        const maskSize = Math.ceil( instance.width / 32 ) * 32;
-
-        const maskBits = Array.from(
-          chunks(
-            Array.from(
-              new Uint8ClampedArray(
-                instance.imageData.buffer,
-                instance.imageData.byteOffset + dibSize,
-                instance.length - dibSize,
-              )
-            )
-              .flatMap( byte => {
-                return [
-                  byte & 0b10000000,
-                  byte & 0b01000000,
-                  byte & 0b00100000,
-                  byte & 0b00010000,
-                  byte & 0b00001000,
-                  byte & 0b00000100,
-                  byte & 0b00000010,
-                  byte & 0b00000001,
-                ];
-              } ),
-            maskSize,
-          ),
-        )
-          .flatMap( chunk => chunk.slice( 0, instance.width ) );
-
-        // Leftover bytes are a mask
-        const alphaBytesFlipped = new Uint8ClampedArray(
-          maskBits.map( masked => ( masked > 0 ) ? 0 : 255 )
-        );
-
-        if ( instance.bitmapInfo.orientation === BitmapInfoOrientation.TopDown ) {
-          return alphaBytesFlipped;
-        }
-
-        const alphaBytes = new Uint8ClampedArray( alphaBytesFlipped.length );
-
-        for ( let i = 0; i < alphaBytes.length; i += instance.width ) {
-          const row = alphaBytesFlipped.slice( i, i + instance.width );
-          alphaBytes.set( row, alphaBytes.length - i - instance.width );
-        }
-
-        return alphaBytes;
-      } )();
-    } else if ( instance.bpp === 32 ) {
-      // Create a mask from the alpha channel
-      instance.mask = ( () => {
+    if ( instance.bpp === 32 ) {
+      instance.alpha = ( () => {
         const alphaBytesFlipped = instance.imageData
           .slice( BitmapInfoHeader.HEADERSIZE + colorTableSize, dibSize )
           .slice( 0, ( instance.width * instance.height * instance.bpp ) / 8 )
@@ -112,9 +64,62 @@ export class IcoEntryBmp extends IcoEntry {
 
         return alphaBytes;
       } )();
-    } else {
-      instance.error = 'Unknown trailing data';
+
+      // Discard the alpha if it's entirely transparent
+      if ( instance.alpha.every( x => x === 0 ) ) {
+        instance.alpha = undefined;
+      }
     }
+
+    instance.mask = ( () => {
+      // The mask width is a multiple of 32 bits padded with zeroes
+      const maskWidth = Math.ceil( instance.width / 32 ) * 32;
+      const maskSize = maskWidth * instance.height / 8;
+
+      const maskBits = Array.from(
+        chunks(
+          Array.from(
+            new Uint8ClampedArray(
+              instance.imageData.buffer,
+              instance.imageData.byteOffset + ( instance.length - maskSize ),
+              maskSize,
+            )
+          )
+            .flatMap( byte => {
+              return [
+                byte & 0b10000000,
+                byte & 0b01000000,
+                byte & 0b00100000,
+                byte & 0b00010000,
+                byte & 0b00001000,
+                byte & 0b00000100,
+                byte & 0b00000010,
+                byte & 0b00000001,
+              ];
+            } ),
+          maskWidth,
+        ),
+      )
+        .flatMap( chunk => chunk.slice( 0, instance.width ) );
+
+      // Leftover bytes are a mask
+      const alphaBytesFlipped = new Uint8ClampedArray(
+        maskBits.map( masked => ( masked > 0 ) ? 0 : 255 )
+      );
+
+      if ( instance.bitmapInfo.orientation === BitmapInfoOrientation.TopDown ) {
+        return alphaBytesFlipped;
+      }
+
+      const alphaBytes = new Uint8ClampedArray( alphaBytesFlipped.length );
+
+      for ( let i = 0; i < alphaBytes.length; i += instance.width ) {
+        const row = alphaBytesFlipped.slice( i, i + instance.width );
+        alphaBytes.set( row, alphaBytes.length - i - instance.width );
+      }
+
+      return alphaBytes;
+    } )();
 
     // Create a full BMP file by prepending a BMP header to the data
 
@@ -153,13 +158,27 @@ export class IcoEntryBmp extends IcoEntry {
 
     const ctx = canvas.getContext( '2d', { alpha: true } )!;
 
-    if ( this.mask ) {
-      const maskImage = new Uint8ClampedArray( Array.from( this.mask ).flatMap( alpha => [ 0, 0, 0, alpha ] ) );
-
-      ctx.putImageData( new ImageData( maskImage, this.width, this.height ), 0, 0 );
-
-      ctx.globalCompositeOperation = 'source-in';
+    if ( this.alpha && this.mask.length !== this.alpha.length ) {
+      console.warn( 'Mask and alpha must be the same size' );
     }
+
+    const alphaBytes: number[] = ( () => {
+      if ( this.alpha ) {
+        return new Array( Math.max( this.mask.length, this.alpha.length ) )
+          .fill( undefined )
+          .map( ( _, i ) => Math.min( this.mask![ i ], this.alpha![ i ] ) )
+      }
+
+      return Array.from( this.mask );
+    } )();
+
+    ctx.putImageData( new ImageData(
+      new Uint8ClampedArray( alphaBytes.flatMap( alpha => [ 0, 0, 0, alpha ] ) ),
+      this.width,
+      this.height,
+    ), 0, 0 );
+
+    ctx.globalCompositeOperation = 'source-in';
 
     ctx.drawImage( bmpImage, 0, 0 );
 
