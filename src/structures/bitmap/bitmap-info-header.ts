@@ -256,7 +256,7 @@ export class BitmapInfoHeader extends Structure {
     if ( instance.colorsUsed === 0 && instance.bpp < 32 ) {
       const colors = 1 << ( instance.bpp * instance.planes );
 
-      if ( colors < 256 ) {
+      if ( colors <= 256 ) {
         instance.colorsUsed = colors;
       }
     }
